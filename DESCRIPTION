@@ -1,7 +1,7 @@
 Package: malariaEquilibrium
 Type: Package
 Title: Return equilibrium solution to malaria transmission model
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: as.person(c(
     "Bob Verity <r.verity@imperial.ac.uk> [aut, cre]", 
     "Pete Winskill <p.winskill@imperial.ac.uk> [aut]"

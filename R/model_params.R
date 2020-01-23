@@ -1,5 +1,6 @@
 #------------------------------------------------
 # overload print() function for model_params
+#' @method print model_params
 #' @noRd
 print.model_params <- function(x, ...) {
 
@@ -12,6 +13,7 @@ print.model_params <- function(x, ...) {
 
 #------------------------------------------------
 # overload summary() function for model_params
+#' @method summary model_params
 #' @noRd
 summary.model_params <- function(x, ...) {
 

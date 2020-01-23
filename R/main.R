@@ -2,10 +2,10 @@
 #' @title Laod a Parameter Set from File
 #'
 #' @description Parameter sets are stored within the package
-#'   inst/extdata/parameter_sets folder. Load one of these sets by name.
+#'   inst/extdata folder. Load one of these sets by name.
 #'
 #' @param file_name the name of a parameter set within the
-#'   inst/extdata/parameter_sets folder.
+#'   inst/extdata folder.
 #'
 #' @export
 
@@ -15,7 +15,7 @@ load_parameter_set <- function(file_name = "Jamie_parameters.rds") {
   assert_single_string(file_name)
   
   # load parameter set from inst/extdata/parameter_sets folder
-  params <- malariaEq_file(paste0("parameter_sets/", file_name))
+  params <- malariaEq_file(file_name)
   
   return(params)
 }
@@ -50,7 +50,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   # check inputs
   assert_single_pos(EIR, zero_allowed = FALSE)
   assert_single_bounded(ft)
-  assert_custom_class(p, "mmfit_params")
+  assert_custom_class(p, "model_params")
   assert_vector_pos(age)
   assert_noduplicates(age)
   assert_increasing(age)
@@ -260,7 +260,7 @@ human_equilibrium <- function(EIR, ft, p, age, h = gq_normal(10)) {
   # check inputs
   assert_single_pos(EIR, zero_allowed = FALSE)
   assert_single_bounded(ft)
-  assert_custom_class(p, "mmfit_params")
+  assert_custom_class(p, "model_params")
   assert_vector_pos(age)
   assert_noduplicates(age)
   assert_increasing(age)

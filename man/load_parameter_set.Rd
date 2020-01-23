@@ -8,9 +8,9 @@ load_parameter_set(file_name = "Jamie_parameters.rds")
 }
 \arguments{
 \item{file_name}{the name of a parameter set within the
-inst/extdata/parameter_sets folder.}
+inst/extdata folder.}
 }
 \description{
 Parameter sets are stored within the package
-  inst/extdata/parameter_sets folder. Load one of these sets by name.
+  inst/extdata folder. Load one of these sets by name.
 }

@@ -1,0 +1,121 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# malariaEquilibrium
+
+[![Travis build status](https://travis-ci.org/mrc-ide/malariaEquilibrium.svg?branch=master)](https://travis-ci.org/mrc-ide/malariaEquilibrium)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/mrc-ide/malariaEquilibrium?branch=master&svg=true)](https://ci.appveyor.com/project/mrc-ide/malariaEquilibrium)
+
+Often we are interested in the state of a malaria transmission model at
+equibrium. However, some models (e.g. the Griffin et al. 2014 model) are quite
+complex, and can result in equilibrium solutions that are fairly in-depth. In
+these situations it is useful to have a "canonical" equilibrium solution that is
+tried and tested, and can be used reliably by multiple users. This package aims
+to be a place for hosting these canonical solutions, and for storing useful
+tests, checks and plotting functions for exploring model predictions at
+equilibrium.
+
+## How to interact with this repos
+
+If you have a new model with an equilibrium solution that you would like to host
+here, then please go ahead and do so *in a new branch*. The master branch, on
+the other hand, should always correspond to the current most active model used
+by the malaria group (currently the Griffin et al. 2014 model). This should
+generally be left alone unless you know what you're doing.
+
+Any changes that you propose to branches that you did not create yourself (e.g.
+the master branch) should be done through pull requests, rather than editing
+directly. This gives others the opportunity to review your changes before they
+are implemented in code.
+
+NB. These stipulations are in place because there are other R packages that test
+against the equilibrium solutions from this package, and so any changes here may
+cause other packages to fail if they are not know about beforehand.
+
+## Installation
+
+You can install from the master branch of malariaEquilibrium with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("mrc-ide/malariaEquilibrium")
+```
+
+Or from a specific branch with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("mrc-ide/malariaEquilibrium", ref = "mybranch")
+```
+
+Finally, don't forget to load the package with:
+
+```{r}
+library(malariaEquilibrium)
+```
+
+## Example
+
+### Working with parameters
+
+We start by loading a set of model parameters with the `load_parameter_set()`
+function. This loads an object from the *inst/extdata* folder of the package.
+Alternatively you can load your own parameter set from file.
+
+```{r}
+myparams <- load_parameter_set("Jamie_parameters.rds")
+```
+
+Parameters are of class `model_params`, which is essentially just an ordinary R
+list with a few custom methods. For example, when we print we see the following:
+
+```{r}
+myparams
+```
+
+We can modify parameter values exactly as we would with a named list:
+
+```{r}
+myparams$eta <- 0.1
+head(myparams)
+```
+
+### Getting the equilibrium solution
+
+Now we can calculate the equilibrium solution using the `human_equilibrium()`
+function. This assumes a fixed EIR and treatment rate (`ft`), and takes model
+parameters as input. It calculates the equilibrium solution for a defined age
+range:
+
+```{r}
+eq <- human_equilibrium(EIR = 10, ft = 0.2, p = myparams, age = 0:10)
+```
+
+The output elements are "states" and "FOIM". The former is a matrix with age
+brackets in rows, and model states or other downstream calculations in columns.
+For example, the column "S" gives the equilibrium proportion of humans in the
+susceptible state, while the column "pos_M" gives the proportion of hosts
+positive by microscopy in this bracket.
+
+```{r}
+head(eq$states)
+```
+
+The "FOIM" element gives the onward force of infection from humans to
+mosquitoes, which is a single number:
+
+```{r}
+eq$FOIM
+```

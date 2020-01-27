@@ -1,7 +1,7 @@
 #------------------------------------------------
 # overload print() function for model_params
 #' @method print model_params
-#' @noRd
+#' @export
 print.model_params <- function(x, ...) {
 
   # print summary
@@ -14,7 +14,7 @@ print.model_params <- function(x, ...) {
 #------------------------------------------------
 # overload summary() function for model_params
 #' @method summary model_params
-#' @noRd
+#' @export
 summary.model_params <- function(x, ...) {
 
   # print as dataframe
@@ -24,3 +24,15 @@ summary.model_params <- function(x, ...) {
 
 }
 
+#------------------------------------------------
+# overload head() function for model_params
+#' @method head model_params
+#' @export
+head.model_params <- function(x, ...) {
+  
+  # print head as dataframe
+  x_print <- as.data.frame(cbind(unclass(x)))
+  names(x_print) <- "value"
+  head(x_print)
+  
+}

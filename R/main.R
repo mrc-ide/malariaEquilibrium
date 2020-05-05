@@ -216,19 +216,25 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   inf <- p$cD*D + p$cT*T + cA*A + p$cU*U
   
   # return matrix
-  ret <- cbind(age = age,
-               S = S,
-               T = T,
-               D = D,
-               A = A,
-               U = U,
-               P = P,
-               inf = inf,
-               prop = prop,
-               psi = psi,
-               pos_M = pos_M,
-               pos_PCR = pos_PCR,
-               inc = inc)
+  ret <- cbind(
+     age = age,
+     S = S,
+     T = T,
+     D = D,
+     A = A,
+     U = U,
+     P = P,
+     inf = inf,
+     prop = prop,
+     psi = psi,
+     pos_M = pos_M,
+     pos_PCR = pos_PCR,
+     inc = inc,
+     ICA = ICA,
+     ICM = ICM,
+     ID = ID,
+     IB = IB
+  )
   return(ret)
 }
 

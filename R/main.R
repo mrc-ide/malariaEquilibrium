@@ -102,7 +102,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   # calculate immunity functions and onward infectiousness at equilibrium for
   # all age groups. See doi:10.1186/s12936-016-1437-9 for details of derivation.
   IB <- IC <- ID <- 0
-  ICA <- FOI <- q <- cA <- rep(0, n_age)
+  IDA <- IBA <- ICA <- FOI <- q <- cA <- rep(0, n_age)
   for (i in 1:n_age) {
     
     # rate of ageing plus death
@@ -111,6 +111,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     # update pre-erythrocytic immunity IB
     eps <- EIR*psi[i]
     IB <- (eps/(eps*p$ub + 1) + re*IB)/(1/p$db + re)
+    IBA[i] <- IB
     
     # calculate probability of infection from pre-erythrocytic immunity IB via
     # Hill function
@@ -125,6 +126,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     
     # update detection immunity ID
     ID <- (FOI[i]/(FOI[i]*p$ud + 1) + re*ID)/(1/p$dd + re)
+    IDA[i] <- ID
     
     # calculate probability that an asymptomatic infection (state A) will be
     # detected by microscopy
@@ -212,7 +214,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     inc[i] <- Y*FOI[i]*phi[i]
   }
   
-  # calculate incidence of infection
+  # calculate the mean infectivity
   inf <- p$cD*D + p$cT*T + cA*A + p$cU*U
   
   # return matrix
@@ -232,8 +234,8 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
      inc = inc,
      ICA = ICA,
      ICM = ICM,
-     ID = ID,
-     IB = IB
+     ID = IDA,
+     IB = IBA
   )
   return(ret)
 }
@@ -297,6 +299,8 @@ human_equilibrium <- function(EIR, ft, p, age, h = gq_normal(10)) {
   FOIM <- FOIM*alpha/omega
   
   # return as list
-  return(list(states = E,
-              FOIM = FOIM))
+  return(list(
+    states = E,
+    FOIM = FOIM
+  ))
 }

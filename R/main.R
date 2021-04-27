@@ -142,17 +142,12 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   IM0 <- ICA[age20]*p$PM
   ICM <- rep(0, n_age)
   for (i in 1:n_age) {
-    
-    # rate of ageing plus death
-    re <- r[i] + p$eta
-    
     # maternal clinical immunity decays from birth
-    if (i == 1) {
-      ICM_prev <- IM0
+    if (i == n_age) {
+      ICM[i] <- 0
     } else {
-      ICM_prev <- ICM[i-1]
+      ICM[i] <- IM0 * p$dm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dm) - exp(-age_days[i + 1] / p$dm))
     }
-    ICM[i] <- ICM_prev*re/(1/p$dm + re)
   }
   
   # calculate probability of acquiring clinical disease as a function of

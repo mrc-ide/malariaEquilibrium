@@ -102,7 +102,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   # calculate immunity functions and onward infectiousness at equilibrium for
   # all age groups. See doi:10.1186/s12936-016-1437-9 for details of derivation.
   IB <- IC <- ID <- 0
-  IDA <- IBA <- ICA <- FOI <- q <- cA <- rep(0, n_age)
+  IDA <- IBA <- ICA <- FOI <- q <- cA <- B <- EPS <- rep(0, n_age)
   for (i in 1:n_age) {
     
     # rate of ageing plus death
@@ -110,12 +110,14 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     
     # update pre-erythrocytic immunity IB
     eps <- EIR*psi[i]
+    EPS[i] <- eps
     IB <- (eps/(eps*p$ub + 1) + re*IB)/(1/p$db + re)
     IBA[i] <- IB
     
     # calculate probability of infection from pre-erythrocytic immunity IB via
     # Hill function
     b <- p$b0*(p$b1 + (1-p$b1)/(1+(IB/p$IB0)^p$kb))
+    B[i] <- b
     
     # calculate force of infection (lambda)
     FOI[i] <- b*eps
@@ -142,17 +144,12 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   IM0 <- ICA[age20]*p$PM
   ICM <- rep(0, n_age)
   for (i in 1:n_age) {
-    
-    # rate of ageing plus death
-    re <- r[i] + p$eta
-    
     # maternal clinical immunity decays from birth
-    if (i == 1) {
-      ICM_prev <- IM0
+    if (i == n_age) {
+      ICM[i] <- 0
     } else {
-      ICM_prev <- ICM[i-1]
+      ICM[i] <- IM0 * p$dm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dm) - exp(-age_days[i + 1] / p$dm))
     }
-    ICM[i] <- ICM_prev*re/(1/p$dm + re)
   }
   
   # calculate probability of acquiring clinical disease as a function of
@@ -235,7 +232,11 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
      ICA = ICA,
      ICM = ICM,
      ID = IDA,
-     IB = IBA
+     IB = IBA,
+     B = B,
+     FOI = FOI,
+     phi = phi,
+     EPS = EPS
   )
   return(ret)
 }

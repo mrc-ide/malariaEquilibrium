@@ -2,9 +2,24 @@ Package: malariaEquilibrium
 Type: Package
 Title: Return equilibrium solution to malaria transmission model
 Version: 1.0.0
-Authors@R: as.person(c(
-    "Bob Verity <r.verity@imperial.ac.uk> [aut, cre]", 
-    "Pete Winskill <p.winskill@imperial.ac.uk> [aut]"
+Authors@R: c(
+  person(
+    given = "Bob",
+    family = "Verity",
+    role = c('aut', 'cre'),
+    email = 'r.verity@imperial.ac.uk'
+  ),
+  person(
+    given = "Pete",
+    family = "Winskill",
+    role = c('aut'),
+    email = 'p.winskill@imperial.ac.uk'
+  ),
+  person(
+    given = "Giovanni",
+    family = "Charles",
+    role = c('aut'),
+    email = 'giovanni.charles@gmail.com'
   ))
 Description: Often we are interested in the state of a given malaria transmission
         model at equibrium. However, some models (e.g. the Griffin et al. 2014 model)

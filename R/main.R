@@ -184,7 +184,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
       bP <- p$rT*bT + r[i-1]*P[i-1]/betaP
     }
     
-    # calculate Y
+    # calculate Y, which is the sum of all non-diseased states
     Y <- (prop[i] - (bT + bD + bP))/(1 + aT + aD + aP)
     
     # calculate final {T,D,P} solution

@@ -101,8 +101,8 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   
   # calculate immunity functions and onward infectiousness at equilibrium for
   # all age groups. See doi:10.1186/s12936-016-1437-9 for details of derivation.
-  IB <- IC <- ID <- 0
-  IDA <- IBA <- ICA <- FOI <- q <- cA <- B <- EPS <- rep(0, n_age)
+  IB <- IC <- ID <- IV <- 0
+  IDA <- IBA <- ICA <- IVA <- FOI <- q <- cA <- B <- EPS <- rep(0, n_age)
   for (i in 1:n_age) {
     
     # rate of ageing plus death
@@ -129,6 +129,10 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     # update detection immunity ID
     ID <- (FOI[i]/(FOI[i]*p$ud + 1) + re*ID)/(1/p$dd + re)
     IDA[i] <- ID
+
+    # update severe immunity IV
+    IV <- (FOI[i]/(FOI[i]*p$uv + 1) + re*IV)/(1/p$dv + re)
+    IVA[i] <- IV
     
     # calculate probability that an asymptomatic infection (state A) will be
     # detected by microscopy
@@ -142,23 +146,31 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   # calculate maternal clinical immunity, assumed to be at birth a proportion of
   # the acquired immunity of a 20 year old
   IM0 <- ICA[age20]*p$PM
+  IV0 <- IVA[age20]*p$PVM
   ICM <- rep(0, n_age)
+  IVM <- rep(0, n_age)
   for (i in 1:n_age) {
     # maternal clinical immunity decays from birth
     if (i == n_age) {
       ICM[i] <- 0
+      IVM[i] <- 0
     } else {
       ICM[i] <- IM0 * p$dm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dm) - exp(-age_days[i + 1] / p$dm))
+      IVM[i] <- IV0 * p$dvm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dvm) - exp(-age_days[i + 1] / p$dvm))
     }
   }
   
   # calculate probability of acquiring clinical disease as a function of
   # different immunity types
   phi <- p$phi0*(p$phi1 + (1-p$phi1)/(1 + ((ICA+ICM)/p$IC0)^p$kc))
-  
+
+  # calculate probability of acquiring severe disease
+  fv <- 1 - (1 - p$fv0)/(1 + (age_days_midpoint/p$av)^p$gammav)
+  theta <- p$theta0*(p$theta1 + (1-p$theta1)/(1 + fv*((IVA+IVM)/p$IV0)^p$kv))
+
   # calculate equilibrium solution of all model states. Again, see
   # doi:10.1186/s12936-016-1437-9 for details
-  pos_M <- pos_PCR <- inc <- rep(0, n_age)
+  pos_M <- pos_PCR <- inc <- sev_inc <- rep(0, n_age)
   S <- T <- P <- D <- A <- U <- rep(0, n_age)
   for (i in 1:n_age) {
     
@@ -209,9 +221,9 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     
     # calculate clinical incidence
     inc[i] <- Y*FOI[i]*phi[i]
+    sev_inc[i] <- Y*FOI[i]*theta[i]
   }
-  
-  # calculate the mean infectivity
+ # calculate the mean infectivity
   inf <- p$cD*D + p$cT*T + cA*A + p$cU*U
   
   # return matrix
@@ -229,8 +241,11 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
      pos_M = pos_M,
      pos_PCR = pos_PCR,
      inc = inc,
+     sev_inc = sev_inc,
      ICA = ICA,
      ICM = ICM,
+     IVA = IVA,
+     IVM = IVM,
      ID = IDA,
      IB = IBA,
      B = B,

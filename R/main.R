@@ -143,14 +143,15 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     cA[i] <- p$cU + (p$cD-p$cU)*q[i]^p$g_inf
   }
   
-  # calculate maternal clinical immunity, assumed to be at birth a proportion of
-  # the acquired immunity of a 20 year old
+  # calculate maternal clinical and severe immunity, assumed at birth to be a
+  # proportion of the acquired immunity of a 20 year old
   IM0 <- ICA[age20]*p$PM
   IV0 <- IVA[age20]*p$PVM
+  
   ICM <- rep(0, n_age)
   IVM <- rep(0, n_age)
   for (i in 1:n_age) {
-    # maternal clinical immunity decays from birth
+    # maternal clinical and severe immunity decays from birth
     if (i == n_age) {
       ICM[i] <- 0
       IVM[i] <- 0
@@ -164,7 +165,8 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   # different immunity types
   phi <- p$phi0*(p$phi1 + (1-p$phi1)/(1 + ((ICA+ICM)/p$IC0)^p$kc))
 
-  # calculate probability of acquiring severe disease
+  # calculate probability of acquiring severe disease. See expression in
+  # https://doi.org/10.1371/journal.pmed.1002448 supplementary material, page 5.
   fv <- 1 - (1 - p$fv0)/(1 + (age_days_midpoint/p$av)^p$gammav)
   theta <- p$theta0*(p$theta1 + (1-p$theta1)/(1 + fv*((IVA+IVM)/p$IV0)^p$kv))
 
@@ -223,7 +225,8 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
     inc[i] <- Y*FOI[i]*phi[i]
     sev_inc[i] <- Y*FOI[i]*theta[i]
   }
- # calculate the mean infectivity
+  
+  # calculate mean infectivity
   inf <- p$cD*D + p$cT*T + cA*A + p$cU*U
   
   # return matrix

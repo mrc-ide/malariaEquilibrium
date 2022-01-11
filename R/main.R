@@ -254,7 +254,9 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
      B = B,
      FOI = FOI,
      phi = phi,
-     EPS = EPS
+     EPS = EPS,
+     cA = cA,
+     r = r
   )
   return(ret)
 }

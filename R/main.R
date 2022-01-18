@@ -149,14 +149,18 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
   IV0 <- IVA[age20]*p$PVM
   
   ICM <- rep(0, n_age)
+  ICM_age <- rep(0, n_age)
   IVM <- rep(0, n_age)
+  
   for (i in 1:n_age) {
     # maternal clinical and severe immunity decays from birth
     if (i == n_age) {
       ICM[i] <- 0
+      ICM_age[i] <- 0
       IVM[i] <- 0
     } else {
       ICM[i] <- IM0 * p$dm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dm) - exp(-age_days[i + 1] / p$dm))
+      ICM_age[i] <- ICM[i] / IM0
       IVM[i] <- IV0 * p$dvm / (age_days[i + 1] - age_days[i]) * (exp(-age_days[i] / p$dvm) - exp(-age_days[i + 1] / p$dvm))
     }
   }
@@ -247,6 +251,7 @@ human_equilibrium_no_het <- function(EIR, ft, p, age) {
      sev_inc = sev_inc,
      ICA = ICA,
      ICM = ICM,
+     ICM_age = ICM_age,
      IVA = IVA,
      IVM = IVM,
      ID = IDA,
